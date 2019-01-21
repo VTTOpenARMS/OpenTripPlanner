@@ -1111,6 +1111,7 @@ public class PatternHopFactory {
     }
 
     private boolean isValid(Geometry geometry, Stop s0, Stop s1) {
+        LOG.warn("isValidTest!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         Coordinate[] coordinates = geometry.getCoordinates();
         if (coordinates.length < 2) {
             return false;

@@ -1114,13 +1114,16 @@ public class PatternHopFactory {
         LOG.warn("isValidTest!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         Coordinate[] coordinates = geometry.getCoordinates();
         if (coordinates.length < 2) {
+            LOG.warn("coordinates.length < 2");
             return false;
         }
         if (geometry.getLength() == 0) {
+            LOG.warn("geometry.getLength() == 0");
             return false;
         }
         for (Coordinate coordinate : coordinates) {
             if (Double.isNaN(coordinate.x) || Double.isNaN(coordinate.y)) {
+                LOG.warn("Double.isNaN(coordinate.x) || Double.isNaN(coordinate.y)");
                 return false;
             }
         }
@@ -1130,8 +1133,10 @@ public class PatternHopFactory {
         Coordinate startCoord = new Coordinate(s0.getLon(), s0.getLat());
         Coordinate endCoord = new Coordinate(s1.getLon(), s1.getLat());
         if (SphericalDistanceLibrary.fastDistance(startCoord, geometryStartCoord) > maxStopToShapeSnapDistance) {
+            LOG.warn("maxStopToShapeSnapDistance too big: " +SphericalDistanceLibrary.fastDistance(startCoord, geometryStartCoord));
             return false;
         } else if (SphericalDistanceLibrary.fastDistance(endCoord, geometryEndCoord) > maxStopToShapeSnapDistance) {
+            LOG.warn("SphericalDistanceLibrary too big: " +SphericalDistanceLibrary.fastDistance(endCoord, geometryEndCoord));
             return false;
         }
         return true;

@@ -266,7 +266,7 @@ public class PatternHopFactory {
 
     public int subwayAccessTime = 0;
 
-    private double maxStopToShapeSnapDistance = 150;
+    private double maxStopToShapeSnapDistance = 300;
 
     public int maxInterlineDistance = 200;
 

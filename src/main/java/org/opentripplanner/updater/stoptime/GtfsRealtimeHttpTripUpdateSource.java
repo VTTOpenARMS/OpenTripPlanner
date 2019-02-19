@@ -63,7 +63,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
                 // Decode message
                 feedMessage = FeedMessage.PARSER.parseFrom(is);
 
-                Log.info("feedMessage: " +feedMessage);
+                LOG.info("feedMessage: " +feedMessage);
 
                 feedEntityList = feedMessage.getEntityList();
                 
@@ -78,7 +78,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
                 // Create List of TripUpdates
                 updates = new ArrayList<>(feedEntityList.size());
                 for (FeedEntity feedEntity : feedEntityList) {
-                    Log.info("feedEntity: " +feedEntity +" hasUpdate: " +feedEntity.hasTripUpdate());
+                    LOG.info("feedEntity: " +feedEntity +" hasUpdate: " +feedEntity.hasTripUpdate());
                     if (feedEntity.hasTripUpdate()) updates.add(feedEntity.getTripUpdate());
                 }
             }else{

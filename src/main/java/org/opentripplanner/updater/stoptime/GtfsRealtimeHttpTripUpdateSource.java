@@ -36,20 +36,20 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
 
     @Override
     public void configure(Graph graph, JsonNode config) throws Exception {
-        System.out.println("GtfsRealtimeHttpTripUpdateSource() - configure(): ");
+        LOG.info("GtfsRealtimeHttpTripUpdateSource() - configure(): ");
         String url = config.path("url").asText();
-        System.out.println("GtfsRealtimeHttpTripUpdateSource() - configure(): url: " +url);
+        LOG.info("GtfsRealtimeHttpTripUpdateSource() - configure(): url: " +url);
         if (url == null) {
             throw new IllegalArgumentException("Missing mandatory 'url' parameter");
         }
         this.url = url;
         this.feedId = config.path("feedId").asText();
-        System.out.println("GtfsRealtimeHttpTripUpdateSource() - configure(): feedId: " +feedId);
+        LOG.info("GtfsRealtimeHttpTripUpdateSource() - configure(): feedId: " +feedId);
     }
 
     @Override
     public List<TripUpdate> getUpdates() {
-        System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates()");
+        LOG.info("GtfsRealtimeHttpTripUpdateSource() - getUpdates()");
         FeedMessage feedMessage = null;
         List<FeedEntity> feedEntityList = null;
         List<TripUpdate> updates = null;
@@ -58,10 +58,13 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
             InputStream is = HttpUtils.getData(url);
             if (is != null) {
 
-                System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNotNull");
+                LOG.info("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNotNull");
 
                 // Decode message
                 feedMessage = FeedMessage.PARSER.parseFrom(is);
+
+                Log.info("feedMessage: " +feedMessage);
+
                 feedEntityList = feedMessage.getEntityList();
                 
                 // Change fullDataset value if this is an incremental update
@@ -75,13 +78,15 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
                 // Create List of TripUpdates
                 updates = new ArrayList<>(feedEntityList.size());
                 for (FeedEntity feedEntity : feedEntityList) {
+                    Log.info("feedEntity: " +feedEntity +" hasUpdate: " feedEntity.hasTripUpdate());
                     if (feedEntity.hasTripUpdate()) updates.add(feedEntity.getTripUpdate());
                 }
+            }else{
+                LOG.info("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNull !!!!!!!!!!!");
             }
-            System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNull !!!!!!!!!!!");
+
         } catch (Exception e) {
             LOG.warn("Failed to parse gtfs-rt feed from " + url + ":", e);
-            System.out.println("Failed to parse gtfs-rt feed from " + url + ":" +e.toString());
         }
         return updates;
     }

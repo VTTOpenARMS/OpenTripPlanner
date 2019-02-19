@@ -72,12 +72,12 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
 
     @Override
     public void configurePolling(Graph graph, JsonNode config) throws Exception {
-        System.out.println("PollingStoptimeUpdater() - configurePolling");
+        LOG.info("PollingStoptimeUpdater() - configurePolling");
         // Create update streamer from preferences
         feedId = config.path("feedId").asText("");
-        System.out.println("PollingStoptimeUpdater() - feedId: " +feedId);
+        LOG.info("PollingStoptimeUpdater() - feedId: " +feedId);
         String sourceType = config.path("sourceType").asText();
-        System.out.println("PollingStoptimeUpdater() - sourceType: " +sourceType);
+        LOG.info("PollingStoptimeUpdater() - sourceType: " +sourceType);
         if (sourceType != null) {
             if (sourceType.equals("gtfs-http")) {
                 updateSource = new GtfsRealtimeHttpTripUpdateSource();
@@ -117,9 +117,9 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
         sentry.put("feedId",feedId);
         sentry.put("updateSource",updateSource.toString());
         sentry.put("frequencySec",pollingPeriodSeconds);
-        System.out.println("PollingStoptimeUpdater() - setup() - feedID: " +feedId);
-        System.out.println("PollingStoptimeUpdater() - setup() - updateSource: " +updateSource.toString());
-        System.out.println("PollingStoptimeUpdater() - setup() - frequencySec: " +pollingPeriodSeconds);
+        LOG.info("PollingStoptimeUpdater() - setup() - feedID: " +feedId);
+        LOG.info("PollingStoptimeUpdater() - setup() - updateSource: " +updateSource.toString());
+        LOG.info("PollingStoptimeUpdater() - setup() - frequencySec: " +pollingPeriodSeconds);
         SentryUtilities.setupSentryFromMap(sentry);
         updaterManager.execute(new GraphWriterRunnable() {
             @Override
@@ -155,7 +155,7 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
      */
     @Override
     public void runPolling() {
-        System.out.println("PollingStoptimeUpdater() - runPolling(): ");
+        LOG.info("PollingStoptimeUpdater() - runPolling(): ");
         // Get update lists from update source
         List<TripUpdate> updates = updateSource.getUpdates();
         boolean fullDataset = updateSource.getFullDatasetValueOfLastUpdates();

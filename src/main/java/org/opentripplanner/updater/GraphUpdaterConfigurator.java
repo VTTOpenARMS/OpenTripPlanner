@@ -50,11 +50,11 @@ public abstract class GraphUpdaterConfigurator {
         // Stop the updater manager if it contains nothing
         if (updaterManager.size() == 0) {
             updaterManager.stop();
-            System.out.println("updaterManager.size() == 0 -> STOP!!!!!!!!");
+            LOG.info("updaterManager.size() == 0 -> STOP!!!!!!!!");
         }
         // Otherwise add it to the graph
         else {
-            System.out.println("updaterManager.size() != 0 -> PROCEED");
+            LOG.info("updaterManager.size() != 0 -> PROCEED");
             graph.updaterManager = updaterManager;
         }
     }
@@ -64,13 +64,13 @@ public abstract class GraphUpdaterConfigurator {
      * @return a GraphUpdaterManager containing all the created updaters
      */
     private static GraphUpdaterManager createManagerFromConfig(Graph graph, JsonNode config) {
-        System.out.println("createManagerFromConfig()");
+        LOG.info("createManagerFromConfig()");
         GraphUpdaterManager updaterManager = new GraphUpdaterManager(graph);
         for (JsonNode configItem : config.path("updaters")) {
 
             // For each sub-node, determine which kind of updater is being created.
             String type = configItem.path("type").asText();
-            System.out.println("TYPE: " + type);
+            LOG.info("TYPE: " + type);
             GraphUpdater updater = null;
             if (type != null) {
                 if (type.equals("bike-rental")) {
@@ -83,7 +83,7 @@ public abstract class GraphUpdaterConfigurator {
                     updater = new CarParkUpdater();
                 }
                 else if (type.equals("stop-time-updater")) {
-                    System.out.println("stop-time-updater found ");
+                    LOG.info("stop-time-updater found ");
                     updater = new PollingStoptimeUpdater();
                 }
                 else if (type.equals("websocket-gtfs-rt-updater")) {
@@ -110,10 +110,9 @@ public abstract class GraphUpdaterConfigurator {
             }
 
             if (updater == null) {
-                System.out.println("Unknown updater type: " + type);
                 LOG.error("Unknown updater type: " + type);
             } else {
-                System.out.println("updater configured ok ");
+                LOG.info("updater configured ok ");
                 try {
                     // Inform the GraphUpdater of its parent Manager so the updater can enqueue write operations.
                     // Perhaps this should be done in "addUpdater" below, to ensure the link is reciprocal.
@@ -125,9 +124,7 @@ public abstract class GraphUpdaterConfigurator {
                     // Add graph updater to manager.
                     updaterManager.addUpdater(updater);
                     LOG.info("Configured GraphUpdater: {}", updater);
-                    System.out.println("Configured GraphUpdater: {} " +updater);
                 } catch (Exception e) {
-                    System.out.println("Failed to configure graph updater:" + configItem.asText() +" " +e.toString());
                     LOG.error("Failed to configure graph updater:" + configItem.asText(), e);
                 }
             }

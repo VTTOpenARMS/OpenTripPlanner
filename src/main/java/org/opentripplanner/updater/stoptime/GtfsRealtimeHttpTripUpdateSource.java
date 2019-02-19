@@ -49,7 +49,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
 
     @Override
     public List<TripUpdate> getUpdates() {
-        System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates());
+        System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates()");
         FeedMessage feedMessage = null;
         List<FeedEntity> feedEntityList = null;
         List<TripUpdate> updates = null;
@@ -58,7 +58,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
             InputStream is = HttpUtils.getData(url);
             if (is != null) {
 
-                System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNotNull);
+                System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNotNull");
 
                 // Decode message
                 feedMessage = FeedMessage.PARSER.parseFrom(is);

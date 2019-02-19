@@ -81,7 +81,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
             System.out.println("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNull !!!!!!!!!!!");
         } catch (Exception e) {
             LOG.warn("Failed to parse gtfs-rt feed from " + url + ":", e);
-            System.out.println("Failed to parse gtfs-rt feed from " + url + ":", e);
+            System.out.println("Failed to parse gtfs-rt feed from " + url + ":" +e.toString());
         }
         return updates;
     }

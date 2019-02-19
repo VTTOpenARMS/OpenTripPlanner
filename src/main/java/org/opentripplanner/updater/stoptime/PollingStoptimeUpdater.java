@@ -119,7 +119,7 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
         sentry.put("frequencySec",pollingPeriodSeconds);
         System.out.println("PollingStoptimeUpdater() - setup() - feedID: " +feedId);
         System.out.println("PollingStoptimeUpdater() - setup() - updateSource: " +updateSource.toString());
-        System.out.println("PollingStoptimeUpdater() - setup() - frequencySec: " +frequencySec);
+        System.out.println("PollingStoptimeUpdater() - setup() - frequencySec: " +pollingPeriodSeconds);
         SentryUtilities.setupSentryFromMap(sentry);
         updaterManager.execute(new GraphWriterRunnable() {
             @Override

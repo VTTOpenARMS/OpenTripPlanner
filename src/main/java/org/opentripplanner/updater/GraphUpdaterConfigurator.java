@@ -125,7 +125,7 @@ public abstract class GraphUpdaterConfigurator {
                     // Add graph updater to manager.
                     updaterManager.addUpdater(updater);
                     LOG.info("Configured GraphUpdater: {}", updater);
-                    System.out.println("Configured GraphUpdater: {}", updater);
+                    System.out.println("Configured GraphUpdater: {} " +updater);
                 } catch (Exception e) {
                     System.out.println("Failed to configure graph updater:" + configItem.asText() +" " +e.toString());
                     LOG.error("Failed to configure graph updater:" + configItem.asText(), e);

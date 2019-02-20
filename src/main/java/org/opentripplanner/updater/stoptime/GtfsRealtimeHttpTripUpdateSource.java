@@ -36,20 +36,20 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
 
     @Override
     public void configure(Graph graph, JsonNode config) throws Exception {
-        LOG.info("GtfsRealtimeHttpTripUpdateSource() - configure(): ");
         String url = config.path("url").asText();
-        LOG.info("GtfsRealtimeHttpTripUpdateSource() - configure(): url: " +url);
+
         if (url == null) {
             throw new IllegalArgumentException("Missing mandatory 'url' parameter");
         }
         this.url = url;
         this.feedId = config.path("feedId").asText();
-        LOG.info("GtfsRealtimeHttpTripUpdateSource() - configure(): feedId: " +feedId);
+
     }
 
     @Override
     public List<TripUpdate> getUpdates() {
-        LOG.info("GtfsRealtimeHttpTripUpdateSource() - getUpdates()");
+        LOG.info("getUpdates()");
+
         FeedMessage feedMessage = null;
         List<FeedEntity> feedEntityList = null;
         List<TripUpdate> updates = null;
@@ -57,13 +57,8 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
         try {
             InputStream is = HttpUtils.getData(url);
             if (is != null) {
-
-                LOG.info("GtfsRealtimeHttpTripUpdateSource() - getUpdates() - isNotNull");
-
                 // Decode message
                 feedMessage = FeedMessage.PARSER.parseFrom(is);
-
-                //LOG.info("feedMessage: " +feedMessage);
 
                 feedEntityList = feedMessage.getEntityList();
                 
@@ -78,7 +73,6 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
                 // Create List of TripUpdates
                 updates = new ArrayList<>(feedEntityList.size());
                 for (FeedEntity feedEntity : feedEntityList) {
-                    LOG.info("feedEntity: " +feedEntity +" hasUpdate: " +feedEntity.hasTripUpdate());
                     if (feedEntity.hasTripUpdate()) updates.add(feedEntity.getTripUpdate());
                 }
             }else{

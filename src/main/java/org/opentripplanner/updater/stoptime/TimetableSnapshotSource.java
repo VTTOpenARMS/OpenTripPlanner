@@ -100,7 +100,8 @@ public class TimetableSnapshotSource {
     public GtfsRealtimeFuzzyTripMatcher fuzzyTripMatcher;
 
     public TimetableSnapshotSource(final Graph graph) {
-        LOG.info("TimetableSnapshotSource()");
+        LOG.info("create TimetableSnapshotSource()");
+
         timeZone = graph.getTimeZone();
         graphIndex = graph.index;
 

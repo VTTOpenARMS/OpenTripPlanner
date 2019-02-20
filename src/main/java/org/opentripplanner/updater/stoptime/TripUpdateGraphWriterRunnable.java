@@ -29,8 +29,6 @@ public class TripUpdateGraphWriterRunnable implements GraphWriterRunnable {
 
     public TripUpdateGraphWriterRunnable(final boolean fullDataset, final List<TripUpdate> updates, final String feedId) {
 
-        LOG.info("TripUpdateGraphWriterRunnable() feedId: " +feedId);
-
         // Preconditions
         Preconditions.checkNotNull(updates);
         Preconditions.checkNotNull(feedId);
@@ -46,11 +44,10 @@ public class TripUpdateGraphWriterRunnable implements GraphWriterRunnable {
     public void run(Graph graph) {
         // Apply updates to graph using realtime snapshot source
 
-        LOG.info("TripUpdateGraphWriterRunnable() run");
+        LOG.info("run()");
 
         TimetableSnapshotSource snapshotSource = graph.timetableSnapshotSource;
         if (snapshotSource != null) {
-            LOG.info("TripUpdateGraphWriterRunnable() snapshotSource != null");
             snapshotSource.applyTripUpdates(graph, fullDataset, updates, feedId);
         } else {
             LOG.error("Could not find realtime data snapshot source in graph."

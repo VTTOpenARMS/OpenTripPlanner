@@ -168,6 +168,8 @@ public class TimetableSnapshotSource {
      */
     public void applyTripUpdates(final Graph graph, final boolean fullDataset, final List<TripUpdate> updates, final String feedId) {
         LOG.info("applyTripUpdates()");
+        LOG.error("TEST!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
         SentryUtilities.setupSentryTimetableSnapshot(graph, fullDataset, feedId, updates,fuzzyTripMatcher != null);
         if (updates == null) {
             LOG.warn("updates is null");
@@ -253,12 +255,12 @@ public class TimetableSnapshotSource {
                     statistics.increaseApplied();
                 } else {
                     LOG.info("Failed to apply TripUpdate.");
-                    LOG.trace(" Contents: {}", tripUpdate);
+                    LOG.info(" Contents: {}", tripUpdate);
                     statistics.increaseRejected();
                 }
 
             }
-            LOG.debug("end of update message");
+            LOG.info("end of update message");
             statistics.printAndClear();
 
             // Make a snapshot after each message in anticipation of incoming requests
@@ -1006,8 +1008,7 @@ public class TimetableSnapshotSource {
             int sum = appliedBlockCount + rejectedBlockCount;
             if (sum >= logFrequency) {
                 float percentage = 100.0f * (float)appliedBlockCount / (float)sum;
-                LOG.info("Gtfs-Rt statistics: applied {} messages, rejected {} messages, success rate {} %",
-                        appliedBlockCount, rejectedBlockCount, percentage);
+                LOG.info("Gtfs-Rt statistics: applied {} messages, rejected {} messages, success rate {} %", appliedBlockCount, rejectedBlockCount, percentage);
                 appliedBlockCount = 0;
                 rejectedBlockCount = 0;
             }

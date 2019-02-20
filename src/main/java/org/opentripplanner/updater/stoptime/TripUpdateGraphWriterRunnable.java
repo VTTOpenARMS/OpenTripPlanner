@@ -47,11 +47,14 @@ public class TripUpdateGraphWriterRunnable implements GraphWriterRunnable {
         LOG.info("run()");
 
         TimetableSnapshotSource snapshotSource = graph.timetableSnapshotSource;
+
+        LOG.info("snapshotSource " +snapshotSource.statistics);
+
         if (snapshotSource != null) {
+            LOG.info("snapshotSource != null");
             snapshotSource.applyTripUpdates(graph, fullDataset, updates, feedId);
         } else {
-            LOG.error("Could not find realtime data snapshot source in graph."
-                    + " The following updates are not applied: {}", updates);
+            LOG.error("Could not find realtime data snapshot source in graph."+ " The following updates are not applied: {}", updates);
         }
     }
 }

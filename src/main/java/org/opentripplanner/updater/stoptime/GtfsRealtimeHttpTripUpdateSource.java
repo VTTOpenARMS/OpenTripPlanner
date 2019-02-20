@@ -63,7 +63,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
                 // Decode message
                 feedMessage = FeedMessage.PARSER.parseFrom(is);
 
-                LOG.info("feedMessage: " +feedMessage);
+                //LOG.info("feedMessage: " +feedMessage);
 
                 feedEntityList = feedMessage.getEntityList();
                 

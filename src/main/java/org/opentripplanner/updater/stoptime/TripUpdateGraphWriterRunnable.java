@@ -45,8 +45,12 @@ public class TripUpdateGraphWriterRunnable implements GraphWriterRunnable {
     @Override
     public void run(Graph graph) {
         // Apply updates to graph using realtime snapshot source
+
+        LOG.info("TripUpdateGraphWriterRunnable() run");
+
         TimetableSnapshotSource snapshotSource = graph.timetableSnapshotSource;
         if (snapshotSource != null) {
+            LOG.info("TripUpdateGraphWriterRunnable() snapshotSource != null");
             snapshotSource.applyTripUpdates(graph, fullDataset, updates, feedId);
         } else {
             LOG.error("Could not find realtime data snapshot source in graph."

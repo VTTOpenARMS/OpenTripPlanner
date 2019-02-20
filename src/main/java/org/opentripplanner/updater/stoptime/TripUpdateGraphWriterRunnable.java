@@ -28,6 +28,9 @@ public class TripUpdateGraphWriterRunnable implements GraphWriterRunnable {
     private final String feedId;
 
     public TripUpdateGraphWriterRunnable(final boolean fullDataset, final List<TripUpdate> updates, final String feedId) {
+
+        LOG.info("TripUpdateGraphWriterRunnable() feedId: " +feedId);
+
         // Preconditions
         Preconditions.checkNotNull(updates);
         Preconditions.checkNotNull(feedId);
@@ -36,6 +39,7 @@ public class TripUpdateGraphWriterRunnable implements GraphWriterRunnable {
         this.fullDataset = fullDataset;
         this.updates = updates;
         this.feedId = feedId;
+
     }
 
     @Override

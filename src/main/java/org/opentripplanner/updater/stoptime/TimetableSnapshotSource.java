@@ -100,6 +100,7 @@ public class TimetableSnapshotSource {
     public GtfsRealtimeFuzzyTripMatcher fuzzyTripMatcher;
 
     public TimetableSnapshotSource(final Graph graph) {
+        LOG.info("TimetableSnapshotSource()");
         timeZone = graph.getTimeZone();
         graphIndex = graph.index;
 
@@ -165,10 +166,13 @@ public class TimetableSnapshotSource {
      * @param feedId
      */
     public void applyTripUpdates(final Graph graph, final boolean fullDataset, final List<TripUpdate> updates, final String feedId) {
+        LOG.info("applyTripUpdates()");
         SentryUtilities.setupSentryTimetableSnapshot(graph, fullDataset, feedId, updates,fuzzyTripMatcher != null);
         if (updates == null) {
             LOG.warn("updates is null");
             return;
+        }else{
+            LOG.warn("updates is not null");
         }
 
         // Acquire lock on buffer
@@ -178,13 +182,17 @@ public class TimetableSnapshotSource {
             if (fullDataset) {
                 // Remove all updates from the buffer
                 buffer.clear(feedId);
+                LOG.warn("is fullDataset -> remove alll updates from buffer");
             }
 
-            LOG.debug("message contains {} trip updates", updates.size());
+            LOG.info("message contains {} trip updates", updates.size());
             int uIndex = 0;
 
             for (TripUpdate tripUpdate : updates) {
+                LOG.info("FOR LOOP : updates...");
                 SentryUtilities.setupSentryTripUpdate(tripUpdate);
+
+                LOG.info("tripUpdate: " +tripUpdate.toString());
 
                 if (fuzzyTripMatcher != null && tripUpdate.hasTrip()) {
                     final TripDescriptor trip = fuzzyTripMatcher.match(feedId, tripUpdate.getTrip());

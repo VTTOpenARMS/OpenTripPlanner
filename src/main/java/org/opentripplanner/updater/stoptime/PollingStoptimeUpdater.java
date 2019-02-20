@@ -161,6 +161,7 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
         boolean fullDataset = updateSource.getFullDatasetValueOfLastUpdates();
 
         if (updates != null) {
+            LOG.info("updates not null");
             // Handle trip updates via graph writer runnable
             TripUpdateGraphWriterRunnable runnable =
                     new TripUpdateGraphWriterRunnable(fullDataset, updates, feedId);

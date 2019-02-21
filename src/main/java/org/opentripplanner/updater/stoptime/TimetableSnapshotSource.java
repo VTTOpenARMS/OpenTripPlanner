@@ -168,7 +168,7 @@ public class TimetableSnapshotSource {
      */
     public void applyTripUpdates(final Graph graph, final boolean fullDataset, final List<TripUpdate> updates, final String feedId) {
         LOG.error("applyTripUpdates()");
-        LOG.error("TEST!!????????????");
+        LOG.error("feedId: " +feedId);
 
         SentryUtilities.setupSentryTimetableSnapshot(graph, fullDataset, feedId, updates,fuzzyTripMatcher != null);
         if (updates == null) {
@@ -188,7 +188,7 @@ public class TimetableSnapshotSource {
                 LOG.error("is fullDataset -> remove alll updates from buffer");
             }
 
-            LOG.info("message contains {} trip updates", updates.size());
+            LOG.error("message contains {} trip updates", updates.size());
             int uIndex = 0;
 
             for (TripUpdate tripUpdate : updates) {
@@ -203,10 +203,6 @@ public class TimetableSnapshotSource {
                 }
 
                 if (!tripUpdate.hasTrip()) {
-                    LOG.error("Missing TripDescriptor in gtfs-rt trip update: \n{}", tripUpdate);
-                    statistics.increaseRejected();
-                    continue;
-                }
 
                 ServiceDate serviceDate = new ServiceDate();
                 final TripDescriptor tripDescriptor = tripUpdate.getTrip();

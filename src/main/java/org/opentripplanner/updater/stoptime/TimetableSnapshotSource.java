@@ -203,6 +203,10 @@ public class TimetableSnapshotSource {
                 }
 
                 if (!tripUpdate.hasTrip()) {
+                    LOG.error("Missing TripDescriptor in gtfs-rt trip update: \n{}", tripUpdate);
+                    statistics.increaseRejected();
+                    continue;
+                }
 
                 ServiceDate serviceDate = new ServiceDate();
                 final TripDescriptor tripDescriptor = tripUpdate.getTrip();
@@ -211,7 +215,7 @@ public class TimetableSnapshotSource {
                     try {
                         serviceDate = ServiceDate.parseString(tripDescriptor.getStartDate());
                     } catch (final ParseException e) {
-                        LOG.warn("Failed to parse start date in gtfs-rt trip update: \n{}", tripUpdate);
+                        LOG.error("Failed to parse start date in gtfs-rt trip update: \n{}", tripUpdate);
                         statistics.increaseRejected();
                         continue;
                     }
@@ -221,7 +225,7 @@ public class TimetableSnapshotSource {
                 }
 
                 uIndex += 1;
-                LOG.debug("trip update #{} ({} updates) :",
+                LOG.error("trip update #{} ({} updates) :",
                         uIndex, tripUpdate.getStopTimeUpdateCount());
                 LOG.trace("{}", tripUpdate);
 
@@ -250,13 +254,13 @@ public class TimetableSnapshotSource {
                 if (applied) {
                     statistics.increaseApplied();
                 } else {
-                    LOG.info("Failed to apply TripUpdate.");
-                    LOG.info(" Contents: {}", tripUpdate);
+                    LOG.error("Failed to apply TripUpdate.");
+                    LOG.error(" Contents: {}", tripUpdate);
                     statistics.increaseRejected();
                 }
 
             }
-            LOG.info("end of update message");
+            LOG.error("end of update message");
             statistics.printAndClear();
 
             // Make a snapshot after each message in anticipation of incoming requests

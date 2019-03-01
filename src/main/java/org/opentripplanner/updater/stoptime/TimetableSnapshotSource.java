@@ -259,7 +259,7 @@ public class TimetableSnapshotSource {
                 }
 
             }
-            LOG.error("end of update message");
+            //LOG.error("end of update message");
             statistics.printAndClear();
 
             // Make a snapshot after each message in anticipation of incoming requests

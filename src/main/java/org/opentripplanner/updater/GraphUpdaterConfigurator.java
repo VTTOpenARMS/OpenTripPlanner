@@ -41,8 +41,7 @@ public abstract class GraphUpdaterConfigurator {
         // Look for embedded config if it exists
         // TODO figure out how & when we will use embedded config in absence of main config.
         JsonNode embeddedConfig = null; // graph.routerConfig;
-        LOG.info("Using configurations: " + (mainConfig == null ? "" : "[main]") + " "
-                + (embeddedConfig == null ? "" : "[embedded]"));
+        LOG.info("Using configurations: " + (mainConfig == null ? "" : "[main]") + " " + (embeddedConfig == null ? "" : "[embedded]"));
 
         // Create a updater manager for this graph, and create updaters according to the JSON configuration.
         GraphUpdaterManager updaterManager = createManagerFromConfig(graph, mainConfig);
@@ -50,11 +49,11 @@ public abstract class GraphUpdaterConfigurator {
         // Stop the updater manager if it contains nothing
         if (updaterManager.size() == 0) {
             updaterManager.stop();
-            LOG.info("updaterManager.size() == 0 -> STOP!!!!!!!!");
+            //LOG.info("updaterManager.size() == 0 -> STOP!!!!!!!!");
         }
         // Otherwise add it to the graph
         else {
-            LOG.info("updaterManager.size() != 0 -> PROCEED");
+            //LOG.info("updaterManager.size() != 0 -> PROCEED");
             graph.updaterManager = updaterManager;
         }
     }
@@ -64,13 +63,13 @@ public abstract class GraphUpdaterConfigurator {
      * @return a GraphUpdaterManager containing all the created updaters
      */
     private static GraphUpdaterManager createManagerFromConfig(Graph graph, JsonNode config) {
-        LOG.info("createManagerFromConfig()");
+        //LOG.info("createManagerFromConfig()");
         GraphUpdaterManager updaterManager = new GraphUpdaterManager(graph);
         for (JsonNode configItem : config.path("updaters")) {
 
             // For each sub-node, determine which kind of updater is being created.
             String type = configItem.path("type").asText();
-            LOG.info("TYPE: " + type);
+            //LOG.info("TYPE: " + type);
             GraphUpdater updater = null;
             if (type != null) {
                 if (type.equals("bike-rental")) {

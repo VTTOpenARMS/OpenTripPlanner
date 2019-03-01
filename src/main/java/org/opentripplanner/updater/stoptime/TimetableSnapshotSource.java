@@ -167,15 +167,15 @@ public class TimetableSnapshotSource {
      * @param feedId
      */
     public void applyTripUpdates(final Graph graph, final boolean fullDataset, final List<TripUpdate> updates, final String feedId) {
-        LOG.error("applyTripUpdates()");
-        LOG.error("feedId: " +feedId);
+        //LOG.error("applyTripUpdates()");
+        //LOG.error("feedId: " +feedId);
 
         SentryUtilities.setupSentryTimetableSnapshot(graph, fullDataset, feedId, updates,fuzzyTripMatcher != null);
         if (updates == null) {
             LOG.error("updates is null");
             return;
         }else{
-            LOG.error("updates is not null");
+            //LOG.error("updates is not null");
         }
 
         // Acquire lock on buffer
@@ -185,17 +185,17 @@ public class TimetableSnapshotSource {
             if (fullDataset) {
                 // Remove all updates from the buffer
                 buffer.clear(feedId);
-                LOG.error("is fullDataset -> remove alll updates from buffer");
+               // LOG.error("is fullDataset -> remove alll updates from buffer");
             }
 
-            LOG.error("message contains {} trip updates", updates.size());
+            //LOG.error("message contains {} trip updates", updates.size());
             int uIndex = 0;
 
             for (TripUpdate tripUpdate : updates) {
-                LOG.error("FOR LOOP : updates...");
+                //LOG.error("FOR LOOP : updates...");
                 SentryUtilities.setupSentryTripUpdate(tripUpdate);
 
-                LOG.error("tripUpdate: " +tripUpdate.toString());
+                //LOG.error("tripUpdate: " +tripUpdate.toString());
 
                 if (fuzzyTripMatcher != null && tripUpdate.hasTrip()) {
                     final TripDescriptor trip = fuzzyTripMatcher.match(feedId, tripUpdate.getTrip());
@@ -225,9 +225,8 @@ public class TimetableSnapshotSource {
                 }
 
                 uIndex += 1;
-                LOG.error("trip update #{} ({} updates) :",
-                        uIndex, tripUpdate.getStopTimeUpdateCount());
-                LOG.trace("{}", tripUpdate);
+                //LOG.error("trip update #{} ({} updates) :", uIndex, tripUpdate.getStopTimeUpdateCount());
+                //LOG.trace("{}", tripUpdate);
 
                 // Determine what kind of trip update this is
                 boolean applied = false;

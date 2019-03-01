@@ -74,9 +74,9 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
     public void configurePolling(Graph graph, JsonNode config) throws Exception {
         // Create update streamer from preferences
         feedId = config.path("feedId").asText("");
-        LOG.info("configurePolling() - feedId: " +feedId);
+        //LOG.info("configurePolling() - feedId: " +feedId);
         String sourceType = config.path("sourceType").asText();
-        LOG.info("sourceType: " +sourceType);
+        //LOG.info("sourceType: " +sourceType);
         if (sourceType != null) {
             if (sourceType.equals("gtfs-http")) {
                 updateSource = new GtfsRealtimeHttpTripUpdateSource();
@@ -116,9 +116,9 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
         sentry.put("feedId",feedId);
         sentry.put("updateSource",updateSource.toString());
         sentry.put("frequencySec",pollingPeriodSeconds);
-        LOG.info("setup() - feedID: " +feedId);
-        LOG.info("setup() - updateSource: " +updateSource.toString());
-        LOG.info("setup() - frequencySec: " +pollingPeriodSeconds);
+        //LOG.info("setup() - feedID: " +feedId);
+        //LOG.info("setup() - updateSource: " +updateSource.toString());
+        //LOG.info("setup() - frequencySec: " +pollingPeriodSeconds);
         SentryUtilities.setupSentryFromMap(sentry);
 
         updaterManager.execute(new GraphWriterRunnable() {
@@ -155,7 +155,7 @@ public class PollingStoptimeUpdater extends PollingGraphUpdater {
      */
     @Override
     public void runPolling() {
-        LOG.info("runPolling()");
+        //LOG.info("runPolling()");
         // Get update lists from update source
         List<TripUpdate> updates = updateSource.getUpdates();
         boolean fullDataset = updateSource.getFullDatasetValueOfLastUpdates();

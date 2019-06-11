@@ -234,6 +234,11 @@ public abstract class RoutingResource {
     @QueryParam("unpreferredAgencies")
     protected String unpreferredAgencies;
 
+    /** Penalty added for using route that is unpreferred, i.e. number of seconds that we are willing
+     * to wait for route that is unpreferred. */
+    @QueryParam("useUnpreferredRoutesPenalty")
+    protected Integer useUnpreferredRoutesPenalty;
+
     /** Whether intermediate stops -- those that the itinerary passes in a vehicle, but
      *  does not board or alight at -- should be returned in the response.  For example,
      *  on a Q train trip from Prospect Park to DeKalb Avenue, whether 7th Avenue and
@@ -420,7 +425,10 @@ public abstract class RoutingResource {
 
     @QueryParam("heuristicStepsPerMainStep")
     private Integer heuristicStepsPerMainStep;
-
+    
+    @QueryParam("allowedBikeRentalNetworks")
+    private String allowedBikeRentalNetworks;
+    
     /**
      * Set the method of sorting itineraries in the response. Right now, the only supported value is "duration";
      * otherwise it uses default sorting. More sorting methods may be added in the future.
@@ -526,7 +534,7 @@ public abstract class RoutingResource {
             request.setIntermediatePlacesFromStrings(intermediatePlaces);
 
         if (preferredRoutes != null)
-            request.setPreferredRoutes(preferredRoutes);
+            request.addPreferredRoutes(preferredRoutes);
 
         if (otherThanPreferredRoutesPenalty != null)
             request.setOtherThanPreferredRoutesPenalty(otherThanPreferredRoutesPenalty);
@@ -535,10 +543,13 @@ public abstract class RoutingResource {
             request.setPreferredAgencies(preferredAgencies);
 
         if (unpreferredRoutes != null)
-            request.setUnpreferredRoutes(unpreferredRoutes);
+            request.addUnpreferredRoutes(unpreferredRoutes);
 
         if (unpreferredAgencies != null)
             request.setUnpreferredAgencies(unpreferredAgencies);
+
+        if (useUnpreferredRoutesPenalty != null)
+            request.setUseUnpreferredRoutesPenalty(useUnpreferredRoutesPenalty);
 
         if (walkBoardCost != null)
             request.setWalkBoardCost(walkBoardCost);
@@ -547,10 +558,10 @@ public abstract class RoutingResource {
             request.setBikeBoardCost(bikeBoardCost);
 
         if (bannedRoutes != null)
-            request.setBannedRoutes(bannedRoutes);
+            request.addBannedRoutes(bannedRoutes);
 
         if (whiteListedRoutes != null)
-            request.setWhiteListedRoutes(whiteListedRoutes);
+            request.addWhiteListedRoutes(whiteListedRoutes);
 
         if (bannedAgencies != null)
             request.setBannedAgencies(bannedAgencies);
@@ -686,7 +697,10 @@ public abstract class RoutingResource {
 
         if (heuristicStepsPerMainStep != null)
             request.heuristicStepsPerMainStep = heuristicStepsPerMainStep;
-
+        
+        if (allowedBikeRentalNetworks != null)
+            request.setAllowedBikeRentalNetworks(allowedBikeRentalNetworks);
+        
         if (pathComparator != null)
             request.pathComparator = pathComparator;
 

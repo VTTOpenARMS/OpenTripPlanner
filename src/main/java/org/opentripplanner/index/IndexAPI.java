@@ -146,7 +146,7 @@ public class IndexAPI {
         if (agency == null) return Response.status(Status.NOT_FOUND).entity(MSG_404).build();
         Collection<Route> agencyRoutes = new ArrayList<>();
         for (Route route: routes) {
-            if (route.getAgency() == agency) {
+            if (route.getAgency().getFeedScopeId().equals(agency.getFeedScopeId())) {
                 agencyRoutes.add(route);
             }
         }
@@ -286,7 +286,7 @@ public class IndexAPI {
             return Response.status(Status.BAD_REQUEST).entity(MSG_400).build();
         }
 
-        List<StopTimesInPattern> ret = index.getStopTimesForStop(stop, sd, omitNonPickups);
+        List<StopTimesInPattern> ret = index.getStopTimesForStop(stop, sd, omitNonPickups, false);
         return Response.status(Status.OK).entity(ret).build();
     }
 
@@ -610,7 +610,7 @@ public class IndexAPI {
     @POST
     @Path("/graphql")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getGraphQL (HashMap<String, Object> queryParameters, @Context HttpHeaders httpHeaders, @HeaderParam("OTPTimeout") @DefaultValue("10000") int timeout, @HeaderParam("OTPMaxResolves") @DefaultValue("1000000") long maxResolves) {
+    public Response getGraphQL (HashMap<String, Object> queryParameters, @Context HttpHeaders httpHeaders, @HeaderParam("OTPTimeout") @DefaultValue("30000") int timeout, @HeaderParam("OTPMaxResolves") @DefaultValue("1000000") long maxResolves) {
 
         String query = (String) queryParameters.get("query");
         Object queryVariables = queryParameters.getOrDefault("variables", null);
@@ -635,14 +635,14 @@ public class IndexAPI {
     @POST
     @Path("/graphql")
     @Consumes("application/graphql")
-    public Response getGraphQL (String query, @Context HttpHeaders httpHeaders, @HeaderParam("OTPTimeout") @DefaultValue("10000") int timeout, @HeaderParam("OTPMaxResolves") @DefaultValue("1000000") long maxResolves) {
+    public Response getGraphQL (String query, @Context HttpHeaders httpHeaders, @HeaderParam("OTPTimeout") @DefaultValue("30000") int timeout, @HeaderParam("OTPMaxResolves") @DefaultValue("1000000") long maxResolves) {
        return index.getGraphQLResponse(query, router, null, null, timeout, maxResolves, httpHeaders.getRequestHeaders());
     }
 
     @POST
     @Path("/graphql/batch")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getGraphQLBatch (List<HashMap<String, Object>> queries, @Context HttpHeaders httpHeaders, @HeaderParam("OTPTimeout") @DefaultValue("10000") int timeout, @HeaderParam("OTPMaxResolves") @DefaultValue("1000000") long maxResolves) {
+    public Response getGraphQLBatch (List<HashMap<String, Object>> queries, @Context HttpHeaders httpHeaders, @HeaderParam("OTPTimeout") @DefaultValue("30000") int timeout, @HeaderParam("OTPMaxResolves") @DefaultValue("1000000") long maxResolves) {
         List<Map<String, Object>> responses = new ArrayList<>();
         List<Callable<Map>> futures = new ArrayList<>();
 

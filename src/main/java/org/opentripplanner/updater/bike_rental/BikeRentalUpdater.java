@@ -87,8 +87,6 @@ public class BikeRentalUpdater extends PollingGraphUpdater {
                 source = new GenericKmlBikeRentalDataSource();
             } else if (sourceType.equals("sf-bay-area")) {
                 source = new SanFranciscoBayAreaBikeRentalDataSource(networkName);
-            } else if (sourceType.equals("smoove")) {
-                source = new SmooveBikeRentalDataSource();
             } else if (sourceType.equals("share-bike")) {
                 source = new ShareBikeRentalDataSource();
             } else if (sourceType.equals("uip-bike")) {
@@ -96,9 +94,13 @@ public class BikeRentalUpdater extends PollingGraphUpdater {
             } else if (sourceType.equals("gbfs")) {
                 source = new GbfsBikeRentalDataSource(networkName);
             } else if (sourceType.equals("smoove")) {
-                source = new SmooveBikeRentalDataSource();
+                source = new SmooveBikeRentalDataSource(networkName);
             } else if (sourceType.equals("bicimad")) {
                 source = new BicimadBikeRentalDataSource();
+            } else if (sourceType.equals("samocat")) {
+                source = new SamocatScooterRentalDataSource(networkName);
+            } else if (sourceType.equals("sharingos")) {
+                source = new SharingOSBikeRentalDataSource(networkName);
             }
         }
 
@@ -160,7 +162,7 @@ public class BikeRentalUpdater extends PollingGraphUpdater {
             this.stations = stations;
         }
 
-		@Override
+        @Override
         public void run(Graph graph) {
             // Apply stations to graph
             Set<BikeRentalStation> stationSet = new HashSet<>();
@@ -185,8 +187,7 @@ public class BikeRentalUpdater extends PollingGraphUpdater {
                     if (station.allowDropoff)
                         new RentABikeOffEdge(vertex, vertex, station.networks);
                 } else {
-                    vertex.setBikesAvailable(station.bikesAvailable);
-                    vertex.setSpacesAvailable(station.spacesAvailable);
+                    vertex.setStation(station);
                 }
             }
             /* remove existing stations that were not present in the update */

@@ -300,7 +300,10 @@ public class RoutingRequest implements Cloneable, Serializable {
 
     /** Set of unpreferred agencies for given user. */
     public HashSet<String> unpreferredAgencies = new HashSet<String>();
-
+    
+    /** Set of bike rental networks that should be used in routing. */
+    public Set<String> allowedBikeRentalNetworks = null;
+    
     /**
      * Penalty added for using every unpreferred route. We return number of seconds that we are willing to wait for preferred route.
      */
@@ -672,21 +675,18 @@ public class RoutingRequest implements Cloneable, Serializable {
         }
     }
 
-    public void setPreferredRoutes(String s) {
+    public void addPreferredRoutes(String s) {
         if (!s.isEmpty()) {
-        //RouteMatcher expects route ids in format [FeedId]__[RouteId] -> replace ":" in ids with "__"
-        s = s.replaceAll(":", "__");
-
-        if (s != null && !s.equals(""))
-            preferredRoutes = RouteMatcher.parse(s);
-        }
-        else {
-            preferredRoutes = RouteMatcher.emptyMatcher();
+            //RouteMatcher expects route ids in format [FeedId]__[RouteId] -> replace ":" in ids with "__"
+            s = s.replaceAll(":", "__");
+            this.preferredRoutes.addRoutes(s);
         }
     }
 
     public void setOtherThanPreferredRoutesPenalty(int penalty) {
-        if(penalty < 0) penalty = 0;
+        if (penalty < 0) {
+            penalty = 0;
+        }
         this.otherThanPreferredRoutesPenalty = penalty;
     }
 
@@ -697,38 +697,40 @@ public class RoutingRequest implements Cloneable, Serializable {
         }
     }
 
-    public void setUnpreferredRoutes(String s) {
+    public void addUnpreferredRoutes(String s) {
         if (!s.isEmpty()) {
-        //RouteMatcher expects route ids in format [FeedId]__[RouteId] -> replace ":" in ids with "__"
-        s = s.replaceAll(":", "__");
-
-        if (s != null && !s.equals(""))
-            unpreferredRoutes = RouteMatcher.parse(s);
+            //RouteMatcher expects route ids in format [FeedId]__[RouteId] -> replace ":" in ids with "__"
+            s = s.replaceAll(":", "__");
+            this.unpreferredRoutes.addRoutes(s);
         }
-        else {
-            unpreferredRoutes = RouteMatcher.emptyMatcher();
+    }
+    
+    public void setAllowedBikeRentalNetworks(String s) {
+        allowedBikeRentalNetworks = new HashSet<>();
+        
+        if (!s.isEmpty()) {
+            Collections.addAll(allowedBikeRentalNetworks, s.split(","));
+        }
+    }
+    
+    public void setUseUnpreferredRoutesPenalty(int penalty) {
+        if (penalty < 0) {
+            penalty = 0;
+        }
+        this.useUnpreferredRoutesPenalty = penalty;
+    }
+
+    public void addBannedRoutes(String s) {
+        if (!s.isEmpty()) {
+            //RouteMatcher expects route ids in format [FeedId]__[RouteId] -> replace ":" in ids with "__"
+            s = s.replaceAll(":", "__");
+            this.bannedRoutes.addRoutes(s);
         }
     }
 
-    public void setBannedRoutes(String s) {
+    public void addWhiteListedRoutes(String s) {
         if (!s.isEmpty()) {
-        //RouteMatcher expects route ids in format [FeedId]__[RouteId] -> replace ":" in ids with "__"
-        s = s.replaceAll(":", "__");
-
-        if (s != null && !s.equals(""))
-            bannedRoutes = RouteMatcher.parse(s);
-        }
-        else {
-            bannedRoutes = RouteMatcher.emptyMatcher();
-        }
-    }
-
-    public void setWhiteListedRoutes(String s) {
-        if (!s.isEmpty()) {
-            whiteListedRoutes = RouteMatcher.parse(s);
-        }
-        else {
-            whiteListedRoutes = RouteMatcher.emptyMatcher();
+            this.whiteListedRoutes.addRoutes(s);
         }
     }
 
@@ -909,6 +911,10 @@ public class RoutingRequest implements Cloneable, Serializable {
             clone.whiteListedRoutes = whiteListedRoutes.clone();
             clone.preferredAgencies = (HashSet<String>) preferredAgencies.clone();
             clone.preferredRoutes = preferredRoutes.clone();
+            clone.unpreferredRoutes = unpreferredRoutes.clone();
+            clone.preferredRoutes = preferredRoutes.clone();
+            clone.bannedRoutes = bannedRoutes.clone();
+            clone.whiteListedRoutes = whiteListedRoutes.clone();
             if (this.bikeWalkingOptions != this)
                 clone.bikeWalkingOptions = this.bikeWalkingOptions.clone();
             else
@@ -1059,7 +1065,11 @@ public class RoutingRequest implements Cloneable, Serializable {
                 && disableAlertFiltering == other.disableAlertFiltering
                 && geoidElevation == other.geoidElevation
                 && this.carParkCarLegWeight == other.carParkCarLegWeight
-                && itineraryFiltering == other.itineraryFiltering;
+                && itineraryFiltering == other.itineraryFiltering
+                && allowedFares == null ? other.allowedFares == null
+                        : allowedFares.equals(other.allowedFares)
+                && allowedBikeRentalNetworks == null ? other.allowedBikeRentalNetworks == null
+                        : allowedBikeRentalNetworks.equals(other.allowedBikeRentalNetworks);
     }
 
     /**
@@ -1446,6 +1456,10 @@ public class RoutingRequest implements Cloneable, Serializable {
             return new DurationComparator();
         }
         return new PathComparator(compareStartTimes);
+    }
+
+    public String getAllowedFaresString() {
+        return allowedFares == null ? "All zones allowed" : "Allowed zones: " + allowedFares.toString();
     }
 
 }

@@ -8,16 +8,18 @@ import org.opentripplanner.model.FeedScopedId;
 import org.opentripplanner.model.Route;
 import org.opentripplanner.common.model.T2;
 import org.opentripplanner.gtfs.GtfsLibrary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A RouteMatcher is a collection of routes based on IDs, short name and/or agency IDs.
- * 
+ *
  * We currently support route full IDs (agency ID + route ID), agency ID + route name, or route name only.
  * Support for other matching expression can be easily added later on.
  */
 public class RouteMatcher implements Cloneable, Serializable {
     private static final long serialVersionUID = 8066547338465440312L;
-
+    private static final Logger LOG = LoggerFactory.getLogger(RouteMatcher.class);
     /* Set of full matching route ids (agency ID + route ID) */
     private HashSet<FeedScopedId> agencyAndRouteIds = new HashSet<FeedScopedId>();
 
@@ -26,8 +28,6 @@ public class RouteMatcher implements Cloneable, Serializable {
 
     /* Set of matching route names (without specifying an agency ID) */
     private HashSet<String> routeNames = new HashSet<String>();
-
-    private static RouteMatcher EMPTY_MATCHER = new RouteMatcher();
 
     private boolean containsNames = false;
 
@@ -38,12 +38,12 @@ public class RouteMatcher implements Cloneable, Serializable {
      * Return an empty matcher (which match no routes).
      */
     public static RouteMatcher emptyMatcher() {
-        return EMPTY_MATCHER;
+        return new RouteMatcher();
     }
 
     /**
-     * Build a new RouteMatcher from a string representation.
-     * 
+     * Adds routes to this RouteMatcher from a string representation.
+     *
      * @param routeSpecList A comma-separated list of route spec, each of the format
      *        [agencyId]_[routeName]_[routeId] Please note that this format is not really intuitive
      *        as it does not follow the OBA-gtfslib AgencyAndId standard ('agencyID_routeId'). This
@@ -55,56 +55,60 @@ public class RouteMatcher implements Cloneable, Serializable {
      * @return A RouteMatcher
      * @throws IllegalArgumentException If the string representation is invalid.
      */
-    public static RouteMatcher parse(String routeSpecList) {
-        if (routeSpecList == null)
-            return emptyMatcher();
-        RouteMatcher retval = new RouteMatcher();
-        int n = 0;
+    public void addRoutes(String routeSpecList) {
+        if (routeSpecList == null) {
+            return;
+        }
+        if (routeSpecList.isEmpty()) {
+            return;
+        }
         for (String element : routeSpecList.split(",")) {
             if (element.length() == 0)
                 continue;
-            n++;
             // FIXME regexes with no comments
             String[] routeSpec = element.split("(?<!\\\\)_", 3);
             if (routeSpec.length != 2 && routeSpec.length != 3) {
-                throw new IllegalArgumentException("Wrong route spec format: " + element);
+                LOG.info("Wrong route spec format: " + element);
+                return;
             }
             routeSpec[0] = routeSpec[0].replace("\\_", "_");
             routeSpec[1] = routeSpec[1].replace("\\_", " ");
-            if (routeSpec.length >= 3)
+            if (routeSpec.length >= 3) {
                 routeSpec[2] = routeSpec[2].replace("\\_", "_");
+            }
             String agencyId = routeSpec[0];
-            if (agencyId.length() == 0)
+            if (agencyId.length() == 0) {
                 agencyId = null;
+            }
             String routeName = routeSpec[1];
-            if (routeName.length() == 0)
+            if (routeName.length() == 0) {
                 routeName = null;
+            }
             String routeId = routeSpec.length > 2 ? routeSpec[2] : null;
-            if (routeId != null && routeId.length() == 0)
+            if (routeId != null && routeId.length() == 0) {
                 routeId = null;
+            }
             if (agencyId != null && routeId != null && routeName == null) {
                 // Case 1: specified agency ID and route ID but no route name
-                retval.agencyAndRouteIds.add(new FeedScopedId(agencyId, routeId));
+                agencyAndRouteIds.add(new FeedScopedId(agencyId, routeId));
             } else if (agencyId != null && routeName != null && routeId == null) {
                 // Case 2: specified agency ID and route name but no route ID
-                retval.agencyIdAndRouteNames.add(new T2<String, String>(agencyId, routeName));
+                agencyIdAndRouteNames.add(new T2<String, String>(agencyId, routeName));
             } else if (agencyId == null && routeName != null && routeId == null) {
                 // Case 3: specified route name only
-                retval.routeNames.add(routeName);
+                routeNames.add(routeName);
             } else {
-                throw new IllegalArgumentException("Wrong route spec format: " + element);
+                LOG.info("Wrong route spec format: " + element);
+                return;
             }
+
+            containsNames = !CollectionUtils.isEmpty(agencyIdAndRouteNames) ||
+                    !CollectionUtils.isEmpty(routeNames);
         }
-        if (n == 0)
-            return emptyMatcher();
-
-        retval.containsNames= !CollectionUtils.isEmpty(retval.agencyIdAndRouteNames) || !CollectionUtils.isEmpty(retval.routeNames);
-
-        return retval;
     }
 
     public boolean matches(Route route) {
-        if (this == EMPTY_MATCHER)
+        if (isEmpty())
             return false;
         if (agencyAndRouteIds.contains(route.getId()))
             return true;
@@ -144,6 +148,10 @@ public class RouteMatcher implements Cloneable, Serializable {
         return builder.toString();
     }
 
+    public void addToAgencyAndRouteIds(FeedScopedId id) {
+        agencyAndRouteIds.add(id);
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -171,7 +179,11 @@ public class RouteMatcher implements Cloneable, Serializable {
 
     public RouteMatcher clone() {
         try {
-            return (RouteMatcher) super.clone();
+            RouteMatcher clone = (RouteMatcher) super.clone();
+            clone.agencyAndRouteIds = new HashSet<FeedScopedId>(agencyAndRouteIds);
+            clone.agencyIdAndRouteNames = new HashSet<T2<String, String>>(agencyIdAndRouteNames);
+            clone.routeNames = new HashSet<String>(routeNames);
+            return clone;
         } catch (CloneNotSupportedException e) {
             /* this will never happen since our super is the cloneable object */
             throw new RuntimeException(e);

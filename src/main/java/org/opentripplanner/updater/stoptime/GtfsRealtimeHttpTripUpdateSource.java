@@ -48,7 +48,7 @@ public class GtfsRealtimeHttpTripUpdateSource implements TripUpdateSource, JsonC
 
     @Override
     public List<TripUpdate> getUpdates() {
-        //LOG.info("getUpdates()");
+        LOG.info("getUpdates()");
 
         FeedMessage feedMessage = null;
         List<FeedEntity> feedEntityList = null;
